@@ -1,0 +1,15 @@
+[submodule "api"]
+	path = api
+	url = https://github.com/ventusodev/qor_api.git
+[submodule "merchant"]
+	path = merchant
+	url = https://github.com/ventusodev/qor_merchant.git
+[submodule "service"]
+	path = service
+	url = https://github.com/ventusodev/qor_crm_backend.git
+[submodule "website"]
+	path = website
+	url = https://github.com/ventusodev/qor_crm_website.git
+[submodule "portal"]
+	path = portal
+	url = https://github.com/ventusodev/qor_crm_portal.git
