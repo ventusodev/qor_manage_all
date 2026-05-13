@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DCR Pay — Service Unavailable</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--sidebar:#1A2430;--brand:#BE222F;--bg:#F8FAFC;--surface:#FFFFFF;--text:#0F172A;--text-muted:#64748B;--text-light:#94A3B8;--border:#E2E8F0;--amber:#D97706;--amber-bg:#FFFBEB;--amber-border:#FDE68A;--red:#DC2626;--red-bg:#FEF2F2;--red-border:#FECACA;--radius:8px;--radius-lg:12px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5}
+    .nav{background:var(--sidebar);border-bottom:1px solid rgba(255,255,255,.07)}
+    .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo-mark{width:32px;height:32px;background:var(--brand);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-logo-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em}
+
+    /* TABS (toggle between Maintenance and Error views) */
+    .demo-tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0}
+    .demo-tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:color 160ms,border-color 160ms}
+    .demo-tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+
+    .page{display:none;flex:1;align-items:center;justify-content:center;padding:64px 24px;flex-direction:column}
+    .page.active{display:flex}
+
+    .icon-circle{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;flex-shrink:0}
+    .icon-circle--amber{background:var(--amber-bg);border:2px solid var(--amber-border)}
+    .icon-circle--red{background:var(--red-bg);border:2px solid var(--red-border)}
+
+    .page-title{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-.03em;text-align:center;margin-bottom:10px}
+    .page-sub{font-size:15px;color:var(--text-muted);line-height:1.65;text-align:center;max-width:420px;margin-bottom:32px}
+
+    .status-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;max-width:380px;width:100%;margin-bottom:28px}
+    .status-row{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+    .status-row+.status-row{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+    .status-label{color:var(--text-muted)}
+    .status-value{font-weight:600;color:var(--text)}
+    .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+    .status-dot--amber{background:var(--amber)}
+    .status-dot--green{background:#16A34A}
+
+    .btn-primary{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--radius);background:var(--brand);color:#fff;font:600 14px 'Inter',sans-serif;border:none;cursor:pointer;text-decoration:none;transition:background 180ms}
+    .btn-primary:hover{background:#A31E29}
+    .btn-ghost{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;font:500 14px 'Inter',sans-serif;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:background 160ms,color 160ms}
+    .btn-ghost:hover{background:var(--bg);color:var(--text)}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+    .support-note{font-size:13px;color:var(--text-light);margin-top:20px;text-align:center}
+    .support-note a{color:var(--brand);text-decoration:none;font-weight:500}
+    .support-note a:hover{text-decoration:underline}
+
+    .error-code{font-family:'SF Mono','Fira Code',monospace;font-size:72px;font-weight:700;color:var(--border);letter-spacing:-.04em;margin-bottom:8px;text-align:center}
+  </style>
+</head>
+<body>
+
+<nav class="nav" role="banner">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="DCR Pay — Home">
+      <div class="nav-logo-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="white" stroke-width="1.5"/><path d="M2 8h14" stroke="white" stroke-width="1.5"/><circle cx="5.5" cy="11.5" r="1" fill="white"/></svg></div>
+      <span class="nav-logo-name">DCR Pay</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Demo toggle tabs -->
+<div class="demo-tabs" role="tablist" aria-label="Preview screens">
+  <div class="demo-tab active" role="tab" aria-selected="true" aria-controls="page-maintenance" onclick="showPage('maintenance', this)">Maintenance</div>
+  <div class="demo-tab" role="tab" aria-selected="false" aria-controls="page-error" onclick="showPage('error', this)">404 Error</div>
+</div>
+
+<!-- MAINTENANCE -->
+<div class="page active" id="page-maintenance" role="tabpanel" aria-labelledby="tab-maintenance">
+  <div class="icon-circle icon-circle--amber" aria-hidden="true">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+    </svg>
+  </div>
+  <h1 class="page-title">Scheduled Maintenance</h1>
+  <p class="page-sub">We're performing scheduled maintenance to improve your experience. The portal will be back online shortly.</p>
+
+  <div class="status-card" aria-label="Maintenance status">
+    <div class="status-row">
+      <span class="status-label">Status</span>
+      <span class="status-value"><span class="status-dot status-dot--amber"></span>In Maintenance</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Expected Completion</span>
+      <span class="status-value">Apr 30, 2026 · 14:00 ICT</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Affected Services</span>
+      <span class="status-value">Application Portal</span>
+    </div>
+  </div>
+
+  <div class="support-note">
+    Questions? Contact us at <a href="mailto:support@qorteams.com">support@qorteams.com</a>
+  </div>
+</div>
+
+<!-- 404 ERROR -->
+<div class="page" id="page-error" role="tabpanel" aria-labelledby="tab-error">
+  <div class="error-code" aria-hidden="true">404</div>
+  <div class="icon-circle icon-circle--red" aria-hidden="true">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="15" y1="9" x2="9" y2="15"/>
+      <line x1="9" y1="9" x2="15" y2="15"/>
+    </svg>
+  </div>
+  <h1 class="page-title">Page Not Found</h1>
+  <p class="page-sub">The page you're looking for doesn't exist or has been moved. Please check the URL or return to the home page.</p>
+
+  <div class="btn-row">
+    <a href="/" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 8h12M2 8l5-5M2 8l5 5"/></svg>
+      Back to Home
+    </a>
+    <a href="javascript:history.back()" class="btn-ghost">Go Back</a>
+  </div>
+
+  <div class="support-note">
+    If you believe this is an error, contact <a href="mailto:support@qorteams.com">support@qorteams.com</a>
+  </div>
+</div>
+
+<script>
+  function showPage(name, tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.demo-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    document.getElementById('page-' + name).classList.add('active');
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected','true');
+  }
+</script>
+</body>
+</html>

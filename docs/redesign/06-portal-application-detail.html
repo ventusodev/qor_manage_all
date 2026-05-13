@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DCR Pay — Application Detail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --sidebar:#1A2430;--sidebar-hover:#22303F;
+      --sidebar-text:rgba(255,255,255,.72);--sidebar-muted:rgba(255,255,255,.38);
+      --brand:#BE222F;--brand-hover:#A31E29;
+      --bg:#F8FAFC;--surface:#FFFFFF;
+      --text:#0F172A;--text-muted:#64748B;--text-light:#94A3B8;
+      --border:#E2E8F0;
+      --green:#16A34A;--green-bg:#F0FDF4;--green-border:#BBF7D0;
+      --amber:#D97706;--amber-bg:#FFFBEB;--amber-border:#FDE68A;
+      --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FECACA;
+      --sidebar-w:240px;--topbar-h:64px;--radius:8px;--radius-lg:12px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+
+    /* SIDEBAR */
+    .sidebar{width:var(--sidebar-w);background:var(--sidebar);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:40;border-right:1px solid rgba(255,255,255,.06)}
+    .sidebar-logo{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+    .logo-mark{width:32px;height:32px;background:var(--brand);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .logo-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em}
+    .logo-sub{font-size:10px;color:var(--sidebar-muted);letter-spacing:.07em;text-transform:uppercase;margin-top:1px}
+    .sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
+    .nav-section-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sidebar-muted);padding:12px 10px 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;color:var(--sidebar-text);font-size:13.5px;font-weight:500;text-decoration:none;cursor:pointer;transition:background 160ms,color 160ms}
+    .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+    .nav-item.active{background:var(--brand);color:#fff}
+    .nav-item svg{flex-shrink:0;opacity:.8}
+    .nav-item.active svg{opacity:1}
+    .sidebar-footer{border-top:1px solid rgba(255,255,255,.07);padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 160ms}
+    .sidebar-footer:hover{background:rgba(255,255,255,.05)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+    .user-name{font-size:13px;font-weight:600;color:#fff}.user-role{font-size:11px;color:var(--sidebar-muted)}
+    .sidebar-footer-right{margin-left:auto;color:var(--sidebar-muted)}
+
+    /* MAIN */
+    .main-wrap{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+    .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:30;gap:12px}
+    .topbar-title{font-size:15px;font-weight:600;color:var(--text);flex:1}
+    .topbar-right{display:flex;align-items:center;gap:12px}
+    .topbar-icon-btn{width:36px;height:36px;border-radius:6px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:background 160ms}
+    .topbar-icon-btn:hover{background:var(--bg)}
+    .topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;cursor:pointer}
+
+    /* ACTION BAR */
+    .action-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .back-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--border);border-radius:6px;background:transparent;font:500 13px 'Inter',sans-serif;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:background 160ms,color 160ms}
+    .back-btn:hover{background:var(--bg);color:var(--text)}
+    .action-bar-info{flex:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .app-code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:600;color:var(--brand)}
+    .app-name{font-size:14px;font-weight:600;color:var(--text)}
+    .status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;font-size:11.5px;font-weight:600}
+    .badge--pending{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+    .badge--approved{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+    .badge--declined{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+    .status-dot{width:5px;height:5px;border-radius:50%}
+    .action-bar-right{display:flex;align-items:center;gap:8px}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;font:600 13px 'Inter',sans-serif;cursor:pointer;border:none;transition:background 180ms}
+    .btn--approve{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+    .btn--approve:hover{background:#DCFCE7}
+    .btn--decline{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+    .btn--decline:hover{background:#FFE4E6}
+
+    /* CONTENT */
+    .content{flex:1;padding:24px 28px;display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:start}
+
+    /* SECTIONS */
+    .sections{display:flex;flex-direction:column;gap:12px}
+    .accordion{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+    .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;user-select:none;transition:background 160ms}
+    .accordion-header:hover{background:var(--bg)}
+    .accordion-title{font-size:13.5px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+    .accordion-icon{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .icon--blue{background:#EFF6FF;color:#2563EB}
+    .icon--green{background:var(--green-bg);color:var(--green)}
+    .icon--amber{background:var(--amber-bg);color:var(--amber)}
+    .icon--gray{background:#F1F5F9;color:#64748B}
+    .accordion-chevron{color:var(--text-light);transition:transform 200ms;flex-shrink:0}
+    .accordion-chevron.open{transform:rotate(180deg)}
+    .accordion-body{border-top:1px solid var(--border);padding:20px}
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .field-item{}
+    .field-item-label{font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-light);margin-bottom:4px}
+    .field-item-value{font-size:13.5px;color:var(--text);font-weight:500}
+    .field-item-value.mono{font-family:'SF Mono','Fira Code',monospace;font-size:13px}
+    .field-item.full{grid-column:1/-1}
+
+    /* SIDEBAR TOC */
+    .toc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;position:sticky;top:88px}
+    .toc-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:10px}
+    .toc-item{display:block;padding:6px 8px;border-radius:5px;font-size:13px;color:var(--text-muted);text-decoration:none;cursor:pointer;transition:background 140ms,color 140ms}
+    .toc-item:hover{background:var(--bg);color:var(--text)}
+    .toc-item.active{background:var(--red-bg);color:var(--brand);font-weight:600}
+
+    @media(max-width:900px){.content{grid-template-columns:1fr}.toc{display:none}}
+    @media(max-width:640px){.main-wrap{margin-left:0}.sidebar{display:none}}
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-logo">
+    <div class="logo-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="white" stroke-width="1.5"/><path d="M2 8h14" stroke="white" stroke-width="1.5"/><circle cx="5.5" cy="11.5" r="1" fill="white"/></svg></div>
+    <div><div class="logo-name">DCR Pay</div><div class="logo-sub">Operations</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="#" class="nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a href="#" class="nav-item active" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Applications</a>
+    <div class="nav-section-label">Management</div>
+    <a href="#" class="nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Users</a>
+  </nav>
+  <div class="sidebar-footer" role="button" tabindex="0">
+    <div class="avatar" aria-hidden="true">JD</div>
+    <div><div class="user-name">John Doe</div><div class="user-role">Administrator</div></div>
+    <div class="sidebar-footer-right" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="4" r="1" fill="currentColor"/><circle cx="8" cy="8" r="1" fill="currentColor"/><circle cx="8" cy="12" r="1" fill="currentColor"/></svg></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <header class="topbar" role="banner">
+    <span class="topbar-title">Application Detail</span>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn" aria-label="Notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+      <div class="topbar-avatar" role="button" tabindex="0">JD</div>
+    </div>
+  </header>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar" role="toolbar" aria-label="Application actions">
+    <a href="#" class="back-btn" aria-label="Back to applications list">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 3L5 7l4 4"/></svg>
+      Applications
+    </a>
+    <div class="action-bar-info">
+      <span class="app-code">APP-2024-001</span>
+      <span class="app-name">Nguyen Trading Co.</span>
+      <span class="status-badge badge--pending"><span class="status-dot" style="background:#D97706"></span>Pending Review</span>
+    </div>
+    <div class="action-bar-right">
+      <button class="btn btn--approve">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 7l3.5 3.5L12 3"/></svg>
+        Approve
+      </button>
+      <button class="btn btn--decline">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8"/></svg>
+        Decline
+      </button>
+    </div>
+  </div>
+
+  <main class="content" role="main">
+
+    <!-- SECTIONS -->
+    <div class="sections">
+
+      <!-- Payment Methods -->
+      <div class="accordion" id="sec-payment">
+        <div class="accordion-header" onclick="toggleSection(this)" aria-expanded="true">
+          <div class="accordion-title">
+            <div class="accordion-icon icon--blue" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="10" height="7" rx="1.5"/><path d="M1 5.5h10"/></svg></div>
+            Requested Payment Methods
+          </div>
+          <svg class="accordion-chevron open" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="accordion-body">
+          <div class="field-grid">
+            <div class="field-item"><div class="field-item-label">Selected Methods</div><div class="field-item-value">Visa, Mastercard, UnionPay</div></div>
+            <div class="field-item"><div class="field-item-label">Referral Code</div><div class="field-item-value mono">AGT-00123</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Corporate Information -->
+      <div class="accordion" id="sec-corporate">
+        <div class="accordion-header" onclick="toggleSection(this)" aria-expanded="true">
+          <div class="accordion-title">
+            <div class="accordion-icon icon--gray" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M4 6h4M4 4h4M4 8h2"/></svg></div>
+            Corporate Information
+          </div>
+          <svg class="accordion-chevron open" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="accordion-body">
+          <div class="field-grid">
+            <div class="field-item"><div class="field-item-label">Legal Name</div><div class="field-item-value">Nguyen Trading Co., Ltd.</div></div>
+            <div class="field-item"><div class="field-item-label">Business Registration No.</div><div class="field-item-value mono">0312345678</div></div>
+            <div class="field-item"><div class="field-item-label">Tax ID</div><div class="field-item-value mono">0312345678-001</div></div>
+            <div class="field-item"><div class="field-item-label">Business Type</div><div class="field-item-value">Limited Liability Company</div></div>
+            <div class="field-item full"><div class="field-item-label">Registered Address</div><div class="field-item-value">123 Le Loi Street, District 1, Ho Chi Minh City, Vietnam 70000</div></div>
+            <div class="field-item"><div class="field-item-label">Country of Incorporation</div><div class="field-item-value">Vietnam</div></div>
+            <div class="field-item"><div class="field-item-label">Year Established</div><div class="field-item-value">2018</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Owner Information -->
+      <div class="accordion" id="sec-owners">
+        <div class="accordion-header" onclick="toggleSection(this)" aria-expanded="false">
+          <div class="accordion-title">
+            <div class="accordion-icon icon--gray" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="4" r="2"/><path d="M2 10c0-2.2 1.8-4 4-4s4 1.8 4 4"/></svg></div>
+            Owner(s) Information
+          </div>
+          <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="accordion-body" style="display:none">
+          <div class="field-grid">
+            <div class="field-item"><div class="field-item-label">Full Name</div><div class="field-item-value">Nguyen Van Anh</div></div>
+            <div class="field-item"><div class="field-item-label">Ownership %</div><div class="field-item-value">65%</div></div>
+            <div class="field-item"><div class="field-item-label">ID Number</div><div class="field-item-value mono">012345678901</div></div>
+            <div class="field-item"><div class="field-item-label">Date of Birth</div><div class="field-item-value">Jan 15, 1980</div></div>
+            <div class="field-item full"><div class="field-item-label">Residential Address</div><div class="field-item-value">456 Nguyen Hue Blvd, District 1, Ho Chi Minh City</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Profile -->
+      <div class="accordion" id="sec-business">
+        <div class="accordion-header" onclick="toggleSection(this)" aria-expanded="false">
+          <div class="accordion-title">
+            <div class="accordion-icon icon--gray" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10V6l4-4 4 4v4H8V8H4v2H2z"/></svg></div>
+            Business Profile
+          </div>
+          <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="accordion-body" style="display:none">
+          <div class="field-grid">
+            <div class="field-item"><div class="field-item-label">Industry</div><div class="field-item-value">Wholesale Trade</div></div>
+            <div class="field-item"><div class="field-item-label">MCC Code</div><div class="field-item-value mono">5045</div></div>
+            <div class="field-item"><div class="field-item-label">Monthly Volume</div><div class="field-item-value">VND 500,000,000</div></div>
+            <div class="field-item"><div class="field-item-label">Avg Transaction</div><div class="field-item-value">VND 2,500,000</div></div>
+            <div class="field-item full"><div class="field-item-label">Business Description</div><div class="field-item-value">Import and wholesale distribution of electronic components and consumer goods across Vietnam and Southeast Asia.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settlement -->
+      <div class="accordion" id="sec-settlement">
+        <div class="accordion-header" onclick="toggleSection(this)" aria-expanded="false">
+          <div class="accordion-title">
+            <div class="accordion-icon icon--green" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="10" height="7" rx="1.5"/><path d="M1 5.5h10"/><circle cx="4" cy="7.5" r=".5" fill="currentColor"/></svg></div>
+            Settlement Information
+          </div>
+          <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="accordion-body" style="display:none">
+          <div class="field-grid">
+            <div class="field-item"><div class="field-item-label">Bank Name</div><div class="field-item-value">Vietcombank</div></div>
+            <div class="field-item"><div class="field-item-label">Account Number</div><div class="field-item-value mono">••••••••7890</div></div>
+            <div class="field-item"><div class="field-item-label">Account Name</div><div class="field-item-value">Nguyen Trading Co., Ltd.</div></div>
+            <div class="field-item"><div class="field-item-label">Branch</div><div class="field-item-value">Ho Chi Minh City Main Branch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents -->
+      <div class="accordion" id="sec-docs">
+        <div class="accordion-header" onclick="toggleSection(this)" aria-expanded="false">
+          <div class="accordion-title">
+            <div class="accordion-icon icon--amber" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1H3a1 1 0 00-1 1v8a1 1 0 001 1h6a1 1 0 001-1V4L7 1z"/><path d="M7 1v3h3"/></svg></div>
+            Required Documents
+          </div>
+          <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="accordion-body" style="display:none">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#64748B" stroke-width="1.5" aria-hidden="true"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5L9 1z"/><path d="M9 1v4h4"/></svg>
+                <div><div style="font-size:13px;font-weight:500">Business Registration Certificate</div><div style="font-size:12px;color:var(--text-light)">PDF · 2.1 MB</div></div>
+              </div>
+              <a href="#" style="color:var(--brand);font-size:12.5px;font-weight:500;text-decoration:none">Download</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#64748B" stroke-width="1.5" aria-hidden="true"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5L9 1z"/><path d="M9 1v4h4"/></svg>
+                <div><div style="font-size:13px;font-weight:500">Owner National ID (Front)</div><div style="font-size:12px;color:var(--text-light)">JPG · 890 KB</div></div>
+              </div>
+              <a href="#" style="color:var(--brand);font-size:12.5px;font-weight:500;text-decoration:none">Download</a>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#64748B" stroke-width="1.5" aria-hidden="true"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5L9 1z"/><path d="M9 1v4h4"/></svg>
+                <div><div style="font-size:13px;font-weight:500">Bank Statement (3 months)</div><div style="font-size:12px;color:var(--text-light)">PDF · 4.5 MB</div></div>
+              </div>
+              <a href="#" style="color:var(--brand);font-size:12.5px;font-weight:500;text-decoration:none">Download</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TOC -->
+    <nav class="toc" aria-label="Section navigation">
+      <div class="toc-title">Sections</div>
+      <a href="#sec-payment"   class="toc-item active">Payment Methods</a>
+      <a href="#sec-corporate" class="toc-item">Corporate Info</a>
+      <a href="#sec-owners"    class="toc-item">Owner(s)</a>
+      <a href="#sec-business"  class="toc-item">Business Profile</a>
+      <a href="#sec-settlement"class="toc-item">Settlement</a>
+      <a href="#sec-docs"      class="toc-item">Documents</a>
+    </nav>
+
+  </main>
+</div>
+
+<script>
+  function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.accordion-chevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.classList.toggle('open', !isOpen);
+    header.setAttribute('aria-expanded', !isOpen);
+  }
+</script>
+</body>
+</html>

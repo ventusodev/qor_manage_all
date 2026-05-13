@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DCR Pay — Application Submitted</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--sidebar:#1A2430;--brand:#BE222F;--bg:#F8FAFC;--surface:#FFFFFF;--text:#0F172A;--text-muted:#64748B;--text-light:#94A3B8;--border:#E2E8F0;--green:#16A34A;--green-bg:#F0FDF4;--green-border:#BBF7D0;--radius:8px;--radius-lg:12px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5}
+
+    .nav{background:var(--sidebar);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:50}
+    .nav-inner{max-width:900px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo-mark{width:32px;height:32px;background:var(--brand);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-logo-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em}
+
+    .main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px 40px;max-width:560px;width:100%;text-align:center}
+
+    .check-circle{width:72px;height:72px;border-radius:50%;background:var(--green-bg);border:2px solid var(--green-border);display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
+
+    .card-title{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.03em;margin-bottom:10px}
+    .card-sub{font-size:15px;color:var(--text-muted);line-height:1.65;margin-bottom:28px}
+
+    .ref-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);font-family:'SF Mono','Fira Code',monospace;font-size:14px;font-weight:600;color:var(--text);margin-bottom:36px}
+    .ref-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-light);margin-right:2px}
+
+    .timeline{text-align:left;margin-bottom:36px}
+    .timeline-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:14px}
+    .timeline-steps{display:flex;flex-direction:column;gap:0}
+    .timeline-step{display:flex;gap:14px;position:relative}
+    .timeline-step:not(:last-child) .tl-line{position:absolute;left:11px;top:24px;width:2px;height:calc(100% - 4px);background:var(--border)}
+    .tl-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;margin-top:1px}
+    .tl-dot--done{background:var(--green);border:2px solid var(--green)}
+    .tl-dot--current{background:#fff;border:2px solid var(--brand)}
+    .tl-dot--todo{background:#fff;border:2px solid var(--border)}
+    .tl-content{padding-bottom:20px}
+    .tl-label{font-size:13.5px;font-weight:600;color:var(--text)}
+    .tl-label--current{color:var(--brand)}
+    .tl-label--todo{color:var(--text-light)}
+    .tl-desc{font-size:12.5px;color:var(--text-muted);margin-top:2px}
+
+    .support-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;text-align:left;margin-bottom:28px}
+    .support-box-title{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-light);margin-bottom:8px}
+    .support-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .support-email{font-size:13.5px;color:var(--brand);font-weight:500;text-decoration:none}
+    .support-email:hover{text-decoration:underline}
+    .support-note{font-size:12px;color:var(--text-muted)}
+
+    .btn-home{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;font:500 14px 'Inter',sans-serif;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:background 160ms,color 160ms}
+    .btn-home:hover{background:var(--bg);color:var(--text)}
+
+    @media(max-width:480px){.card{padding:32px 24px}.card-title{font-size:22px}}
+  </style>
+</head>
+<body>
+
+<nav class="nav" role="banner">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="DCR Pay — Home">
+      <div class="nav-logo-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="white" stroke-width="1.5"/><path d="M2 8h14" stroke="white" stroke-width="1.5"/><circle cx="5.5" cy="11.5" r="1" fill="white"/></svg></div>
+      <span class="nav-logo-name">DCR Pay</span>
+    </a>
+  </div>
+</nav>
+
+<main class="main" role="main">
+  <div class="card">
+
+    <div class="check-circle" aria-hidden="true">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 16l7 7 13-13"/>
+      </svg>
+    </div>
+
+    <h1 class="card-title">Application Submitted</h1>
+    <p class="card-sub">Your application has been received and is currently under review. We will contact you via email once a decision has been made.</p>
+
+    <div class="ref-badge" aria-label="Your application reference number">
+      <span class="ref-label">Ref</span>
+      APP-2024-001
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#94A3B8" stroke-width="1.5" aria-hidden="true" style="cursor:pointer" title="Copy reference number"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11V3h8"/></svg>
+    </div>
+
+    <div class="timeline" aria-label="Application status timeline">
+      <div class="timeline-title">What happens next</div>
+      <div class="timeline-steps" role="list">
+        <div class="timeline-step" role="listitem">
+          <div class="tl-dot tl-dot--done" aria-label="Completed">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 6l3 3 5-5"/></svg>
+          </div>
+          <div class="tl-content">
+            <div class="tl-label">Submitted</div>
+            <div class="tl-desc">Your application was received on Apr 30, 2026</div>
+          </div>
+        </div>
+        <div class="timeline-step" role="listitem">
+          <div class="tl-dot tl-dot--current" aria-label="Current step" aria-current="step">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="#BE222F" aria-hidden="true"><circle cx="4" cy="4" r="3"/></svg>
+          </div>
+          <div class="tl-content">
+            <div class="tl-label tl-label--current">Under Review</div>
+            <div class="tl-desc">Our team is reviewing your documents. Typically takes 3–5 business days.</div>
+          </div>
+        </div>
+        <div class="timeline-step" role="listitem">
+          <div class="tl-dot tl-dot--todo" aria-label="Upcoming">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="#E2E8F0" aria-hidden="true"><circle cx="4" cy="4" r="3"/></svg>
+          </div>
+          <div class="tl-content">
+            <div class="tl-label tl-label--todo">Decision</div>
+            <div class="tl-desc">You will be notified by email with the outcome</div>
+          </div>
+        </div>
+        <div class="timeline-step" role="listitem">
+          <div class="tl-dot tl-dot--todo" aria-label="Upcoming">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="#E2E8F0" aria-hidden="true"><circle cx="4" cy="4" r="3"/></svg>
+          </div>
+          <div class="tl-content">
+            <div class="tl-label tl-label--todo">Onboarding</div>
+            <div class="tl-desc">If approved, our team will contact you to complete setup</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="support-box">
+      <div class="support-box-title">Need help?</div>
+      <div class="support-row">
+        <a href="mailto:support@qorteams.com" class="support-email">support@qorteams.com</a>
+        <span class="support-note">Response within 1 business day</span>
+      </div>
+    </div>
+
+    <a href="/" class="btn-home">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 7l12 0M9 3l5 4-5 4" style="display:none"/><path d="M9 3L5 7l4 4"/></svg>
+      Return to Home
+    </a>
+
+  </div>
+</main>
+
+</body>
+</html>

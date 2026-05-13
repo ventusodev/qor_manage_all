@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx ng *)",
+      "Read(//Users/trandang/Documents/working/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4200/)",
+      "Bash(node_modules/.bin/ng-xi18n)",
+      "Bash(node_modules/.bin/ngc --version)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3)",
+      "Bash(lsof -i :4200 -sTCP:LISTEN)",
+      "Bash(lsof -i -sTCP:LISTEN -P)",
+      "Bash(node -e ' *)",
+      "Bash(node --eval \"try { const s = Symbol\\('test'\\); const msg = 'prefix ' + s; } catch\\(e\\) { console.log\\('Confirmed error:', e.message\\); }\")",
+      "Bash(node -e \"console.log\\(require\\('/Users/trandang/Documents/working/dcr/service/node_modules/pg/package.json'\\).version\\)\")",
+      "Bash(node -e \"console.log\\(require\\('/Users/trandang/Documents/working/dcr/service/node_modules/firebase-admin/package.json'\\).version\\)\")"
+    ]
+  }
+}
