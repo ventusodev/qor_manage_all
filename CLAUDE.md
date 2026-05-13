@@ -1,5 +1,9 @@
 # QOR API — Backend
 
+## Claude Rules
+
+- **NEVER read `.env` files** — chứa credentials thật. Chỉ đọc `.env.example` nếu cần hiểu cấu hình.
+
 ## Business Logic
 
 - Merchant hoặc 3rd-party tích hợp trực tiếp với QOR để thực hiện payment / refund / check balance
