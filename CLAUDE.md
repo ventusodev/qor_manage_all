@@ -3,6 +3,7 @@
 ## Claude Rules
 
 - **NEVER read `.env` files** — chứa credentials thật. Chỉ đọc `.env.example` nếu cần hiểu cấu hình.
+- Sau mỗi lần fix code, chạy `sh dev.sh restart`.
 
 ## Business Logic
 
