@@ -1,15 +1,20 @@
 [submodule "api"]
 	path = api
 	url = https://github.com/ventusodev/qor_api.git
+	branch = sandbox
 [submodule "merchant"]
 	path = merchant
 	url = https://github.com/ventusodev/qor_merchant.git
+	branch = sandbox
 [submodule "service"]
 	path = service
 	url = https://github.com/ventusodev/qor_crm_backend.git
+	branch = sandbox
 [submodule "website"]
 	path = website
 	url = https://github.com/ventusodev/qor_crm_website.git
+	branch = sandbox
 [submodule "portal"]
 	path = portal
 	url = https://github.com/ventusodev/qor_crm_portal.git
+	branch = sandbox

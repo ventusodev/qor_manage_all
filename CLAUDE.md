@@ -4,6 +4,90 @@
 
 - **NEVER read `.env` files** — chứa credentials thật. Chỉ đọc `.env.example` nếu cần hiểu cấu hình.
 - Sau mỗi lần fix code, chạy `sh dev.sh restart`.
+- **Chỉ được thao tác trên server ở môi trường sandbox** (`*-sandbox` PM2 apps, `sandbox-*.qorteams.com`, `/var/www/dcr/sandbox/*`, DB `qor_sandbox`). **KHÔNG** đụng vào production (`api`, `merchant`, `portal`, `website`/`service` chạy tại `/var/www/dcr/{api,merchant,portal,website,service}`, domain `*.qorteams.com` không có prefix `sandbox-`, DB `qor_db`) — không restart, không sửa file, không chạy migration trên prod trừ khi user yêu cầu rõ ràng.
+- **Quy ước branch của các submodule** (`api`, `merchant`, `portal`, `service`, `website`): branch `main` = code production, branch `sandbox` = code sandbox. Khi cần build/deploy cho môi trường nào, checkout đúng branch tương ứng.
+- **KHÔNG sửa trực tiếp file build/dist đã deploy** (`/var/www/dcr/**/dist/**`, `/var/www/dcr/sandbox/**/dist/**`). Mọi thay đổi code phải sửa ở **source trong repo này** (đúng branch — `sandbox` để test, `main` là production), sau đó user tự commit + trigger auto build/deploy. Chỉ đọc dist để chẩn đoán lỗi (reverse-engineer bug từ bundle đã compile), không patch thẳng vào đó.
+- **Quy trình sửa code (bắt buộc):** Claude **chỉ được sửa code trong repo `qor_manage_all` này, trên branch `sandbox`** của submodule liên quan — không tự tay sửa gì trên branch `main`, không sửa trực tiếp trên server. Sau khi Claude sửa xong, **user tự commit và tự merge `sandbox` → `main`**; GitHub Action trên branch `main` sẽ tự động trigger build/deploy production. Claude không tự merge, không tự push lên `main`, không tự trigger build.
+  - ⚠️ Lưu ý khi merge `sandbox` → `main`: một số giá trị trong source **khác nhau theo môi trường** (port nội bộ trong `server.ts` — ví dụ sandbox dùng `6000`/`6001`, production dùng `3000`/`3001`; các file `setting.*.ts`). Merge thẳng tay (`git merge`) có thể vô tình mang giá trị sandbox đè lên giá trị production đúng — cần soát lại các chỗ này trước khi merge, không merge mù.
+
+## Server Infrastructure (production host)
+
+> Ghi chú: `/home/ubuntu/qor_manage_all` (repo này) là **dev monorepo** với 5 submodule. Bản build production/sandbox được deploy riêng dưới `/var/www/dcr`, không chạy trực tiếp từ repo này.
+
+### Domains / Nginx (`qorteams.com`) — reverse proxy → PM2 port
+
+| Domain | Proxy → port | PM2 app | Repo (submodule) |
+|--------|--------------|---------|-------------------|
+| `api.qorteams.com` | 3001 | `api` | `qor_api` |
+| `merchant.qorteams.com` | 5000 | `merchant` | `qor_merchant` |
+| `portal.qorteams.com` | 4000 | `portal` | `qor_crm_portal` |
+| `apply.qorteams.com` | 8080 | `website` | `qor_crm_website` |
+| default catch-all (`server_name _`, port 80) | `/api/` → 3000, `/` → 8080 | `service` / `website` | `qor_crm_backend` |
+| `sandbox-api.qorteams.com` | 6001 | `api-sandbox` | — |
+| `sandbox-merchant.qorteams.com` | 6003 | `merchant-sandbox` | — |
+| `sandbox-portal.qorteams.com` | 6002 | `portal-sandbox` | — |
+| `sandbox-apply.qorteams.com` | 6004 | `website-sandbox` | — |
+| (no nginx vhost found) | 3000 / 6000 | `service` / `service-sandbox` | `qor_crm_backend` |
+
+TLS certs via Certbot/Let's Encrypt for `api`, `apply`, `merchant`, `portal` (`.qorteams.com`). Sandbox vhosts are plain HTTP (port 80), no cert.
+
+### PM2 processes (`pm2 list`)
+
+Production apps live in `/var/www/dcr/{api,merchant,service,website,portal}` (defined in `/var/www/dcr/ecosystem.config.js`, plus extra apps started separately — `portal`/`website`/`service` are not in that ecosystem file).
+
+| App | Deployed name | Version | cwd | Port |
+|-----|---------------|---------|-----|------|
+| api | `qor-api` | 1.0.0 | `/var/www/dcr/api` | 3001 |
+| merchant | `qor-merchant` | 0.1.0 | `/var/www/dcr/merchant` | 5000 |
+| service | `trucash-crm-service` | 1.0.9 | `/var/www/dcr/service` | 3000 |
+| website | `trucash-crm-website` | 1.0.17 | `/var/www/dcr/website` | 8080 |
+| portal | `trucash-crm-portal` | 1.0.10 | `/var/www/dcr/portal` | 4000 |
+| api-sandbox | `qor-api` | 1.0.0 | `/var/www/dcr/sandbox/api` | 6001 |
+| merchant-sandbox | `qor-merchant` | 0.1.0 | `/var/www/dcr/sandbox/merchant` | 6003 |
+| service-sandbox | — | — | `/var/www/dcr/sandbox/service` | 6000 |
+| website-sandbox | — | — | `/var/www/dcr/sandbox/website` | 6004 |
+| portal-sandbox | — | — | `/var/www/dcr/sandbox/portal` | 6002 |
+
+> **Fixed 2026-07-07:** `api-sandbox`/`merchant-sandbox` were zombie PM2 processes (`status=online` but `pid=None`) pointing at the defunct `/var/www/sandbox/{api,merchant}` path → nginx 502 on `sandbox-api`/`sandbox-merchant.qorteams.com`. Recreated via `pm2 delete` + `pm2 start npm --cwd /var/www/dcr/sandbox/{api,merchant} --name ... -- start` with `PORT=6001`/`6003`, `NODE_ENV=production`, then `pm2 save`. Both domains now respond (404/307, no longer 502).
+
+> **Fixed 2026-07-07 — portal-sandbox "Could not connect to server" on login:** two stacked misconfigs in the compiled build at `/var/www/dcr/sandbox/portal/dist` (no source repo checked out on this host, so patched in place — originals backed up alongside as `*.bak-<timestamp>`):
+> 1. `dist/client/main.<hash>.js` had `apiUrl:"http://localhost:6000"` baked in — the browser tried to hit `localhost:6000` on the **visitor's own machine**, not the server. Patched to `apiUrl:""` (relative, same-origin).
+> 2. `dist/server.js`'s internal Express `/api` proxy was hardcoded to `127.0.0.1:3000` (**production** `service`) instead of `6000` (`service-sandbox`) — even after fixing (1), sandbox-portal would have silently talked to the prod backend. Patched both occurrences (`port: 3000` → `6000`, `host: "127.0.0.1:3000"` → `"127.0.0.1:6000"`).
+> Verified: proxied request through `sandbox-portal.qorteams.com/api/...` now returns the same JSON as calling `service-sandbox` on 6000 directly. Production `portal`/`service` files and processes were not touched (verified `port: 3000` / `apiUrl:""` unchanged in `/var/www/dcr/portal/dist`, `restart_time` unchanged).
+> ⚠️ This is a **build-artifact patch, not a source fix** — if `portal-sandbox` (or `merchant`/`portal` prod, which share the same server.js template) is ever rebuilt from `qor_crm_portal` source and redeployed, this proxy-port bug will reappear unless the source's environment/proxy config is corrected upstream (currently hardcodes `3000` regardless of environment — that's a real bug in the app repo, not just a bad deploy).
+
+> **Naming legacy:** `service`, `website`, `portal` deployed packages are still named `trucash-crm-*` — QOR was rebranded from an earlier product called "trucash"; repo names (`qor_crm_backend`, `qor_crm_website`, `qor_crm_portal`) already use the new name but `package.json` `name` fields weren't updated.
+
+### Node versions (nvm, `/home/ubuntu/.nvm/versions/node/`)
+
+- `v24.15.0` — default (`node -v`), used by `api` / `merchant` (npm start)
+- `v20.20.2` — installed, unclear which app uses it
+- `v10.24.1` / `v10.16.0` — **required** for `website` and `portal` (Angular 7 / `http_parser`, removed in Node 12+). Do not upgrade these apps' runtime without an Angular upgrade first.
+
+### Database (PostgreSQL, local, active)
+
+| DB | Owner | Used by |
+|----|-------|---------|
+| `qor_db` | `uqor` | production `api` |
+| `qor_sandbox` | `uqor_sandbox` | `api-sandbox` |
+
+(Credentials live in each app's `.env` — never read per the rule above.)
+
+### Host
+
+Ubuntu 24.04.4 LTS · 3.7Gi RAM (no swap) · 77G disk (8.5G used) · single instance, all services co-located on one box via PM2 (no containers in prod; `service/docker-compose.yml` exists in-repo but isn't what's running).
+
+### Dev repo ↔ prod path mapping
+
+| This repo (dev, `qor_manage_all/`) | Prod path | Dev port (`ecosystem.config.js` here) | Prod port |
+|---|---|---|---|
+| `api/` | `/var/www/dcr/api` | 3011 | 3001 |
+| `merchant/` | `/var/www/dcr/merchant` | 3000 | 5000 |
+| `service/` | `/var/www/dcr/service` | 3002 | 3000 |
+| `website/` | `/var/www/dcr/website` | 4000 | 8080 |
+| `portal/` | `/var/www/dcr/portal` | 4200 | 4000 |
+
+Ports differ between dev and prod for every app except none — be careful when reasoning about "port 3000/4000" etc., always check which environment is meant.
 
 ## Business Logic
 
