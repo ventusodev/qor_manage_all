@@ -73,7 +73,9 @@
       "Bash(git -C api status --short)",
       "Bash(git -C api diff --stat)",
       "Bash(git -C api log --oneline -5)",
-      "Bash(git -C portal log --oneline -5)"
+      "Bash(git -C portal log --oneline -5)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
